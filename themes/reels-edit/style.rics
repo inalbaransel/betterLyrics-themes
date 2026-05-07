@@ -1,0 +1,90 @@
+/* Reels Edit Theme - Created by AI */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap');
+
+/* 1. Sadece şarkı sözlerinin fontunu değiştir */
+.blyrics-container, .blyrics-container * {
+  font-family: 'Playfair Display', serif !important;
+}
+
+/* 2. Sabit Kutu (Pencere Boyutu) - Footer'ın zıplamasını engeller */
+.blyrics-container {
+  height: 60vh !important; /* Sabit bir yükseklik */
+  position: relative !important;
+  transform: none !important; /* BetterLyrics'in scroll işlemini blokla */
+  transition: none !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 3. Tüm satırları üst üste aynı yere sabitle (Absolute Positioning) */
+.blyrics-container > .blyrics--line {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 100% !important;
+  opacity: 0 !important; /* Normalde hepsi görünmez */
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transition: none !important;
+  text-align: center !important;
+  font-size: 6.5rem !important; /* SS'deki gibi devasa punto */
+  font-weight: 900 !important;
+  line-height: 1.3 !important;
+  margin: 0 !important;
+}
+
+/* 4. Sadece aktif satırı görünür yap */
+.blyrics-container > .blyrics--line.blyrics--active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* 5. Kelimelerin "Kayarak Dolma" (Karaoke) animasyonunu iptal edip "Anında Belirme" yap */
+.blyrics-container > .blyrics--line > span > .blyrics--word,
+.blyrics-container > .blyrics--line > span > .blyrics--word::after,
+.blyrics-container > .blyrics--line > span > .blyrics--word::before {
+  /* BetterLyrics animasyon veya transition ile soldan sağa kaydırıyor. 
+     step-start sayesinde bu akış "çizgi gibi dolmak" yerine, kelime başladığı an şak diye %100 dolar! */
+  animation-timing-function: step-start !important;
+  transition-timing-function: step-start !important;
+  transition-duration: 0s !important;
+  
+  display: inline-block;
+  margin-right: 8px; /* Kelimeler arası boşluk */
+}
+
+/* Geçmiş kelimeler (Zaten okunmuş olanlar) tam beyaz kalsın */
+.blyrics-container > .blyrics--line > span > .blyrics--word[style*="background-size: 100%"],
+.blyrics-container > .blyrics--line > span > .blyrics--word.blyrics--active {
+  animation-timing-function: step-start !important;
+  transition-timing-function: step-start !important;
+}
+
+/* Eklenti varsayılan karaoke rengini eziyorsa diye garantiye alalım */
+:root {
+  --blyrics-lyric-active-color: #ffffff;
+  --blyrics-lyric-inactive-color: transparent; 
+}
+
+/* Çeviriler için daha şık, küçük ve uyumlu bir stil */
+.blyrics--translated {
+  font-size: 2.2rem !important;
+  color: #cccccc !important;
+  font-weight: 700 !important;
+  display: block !important;
+  margin-top: 15px !important;
+  font-family: 'Playfair Display', serif !important;
+  text-transform: none !important;
+}
+
+/* Scrollbar tamamen gizli kalsın */
+html, body, .ytmusic-description-shelf-renderer, #side-panel {
+  scrollbar-width: none !important;
+}
+::-webkit-scrollbar {
+  display: none !important;
+}

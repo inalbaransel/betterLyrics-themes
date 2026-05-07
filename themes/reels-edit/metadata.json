@@ -1,0 +1,11 @@
+{
+  "id": "reels-edit",
+  "title": "Reels Edit",
+  "description": "A dynamic TikTok/Reels style theme. Emphasizes word-by-word singing with huge bold typography and hides upcoming/past lyrics to create a 'mini reels' stage on the right panel.",
+  "creators": ["Baransel"],
+  "minVersion": "2.2.0.0",
+  "hasShaders": false,
+  "version": "1.0.0",
+  "tags": ["dynamic", "reels", "tiktok", "karaoke"],
+  "images": []
+}
