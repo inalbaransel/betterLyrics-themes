@@ -1,4 +1,4 @@
-/* Reels Edit Theme - Created by AI */
+/* Reels Edit Theme - Created by Baransel */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap');
 
@@ -9,59 +9,92 @@
 
 /* 2. Sabit Kutu (Pencere Boyutu) - Footer'ın zıplamasını engeller */
 .blyrics-container {
-  height: 60vh !important; /* Sabit bir yükseklik */
+  height: 85vh !important; /* Sabit bir yükseklik, player barına yer kalsın */
   position: relative !important;
   transform: none !important; /* BetterLyrics'in scroll işlemini blokla */
   transition: none !important;
-  display: block !important;
+  overflow: hidden !important; /* Scroll'u tamamen kapat ve sabitle */
+  
+  /* Üst üste binmeyi engellemek için Flexbox yapısı */
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important; /* Zıplamayı önlemek için her zaman üstten başla */
+  align-items: flex-start !important; /* Sola (albümün sağına) daya */
+  padding: 38vh 0 0 5% !important; /* Şarkı sözlerini albüm resmiyle hizalamak için aşağı indirdik */
   margin: 0 !important;
-  padding: 0 !important;
 }
 
-/* 3. Tüm satırları üst üste aynı yere sabitle (Absolute Positioning) */
+/* 3. Eski satırların kaybolma animasyonu (Tak diye gitmesin, yeni satır kayarak gelsin) */
 .blyrics-container > .blyrics--line {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 100% !important;
-  opacity: 0 !important; /* Normalde hepsi görünmez */
+  display: block !important;
+  position: relative !important;
+  opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  transition: none !important;
-  text-align: center !important;
-  font-size: 6.5rem !important; /* SS'deki gibi devasa punto */
-  font-weight: 900 !important;
-  line-height: 1.3 !important;
+  
+  width: 100% !important;
+  text-align: left !important;
+  
+  /* Satır kaybolurken yüksekliği sıfırlansın ki alttaki yeni satır yumuşakça yukarı kaysın */
+  max-height: 0 !important;
   margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  
+  /* Çıkış animasyonu: Şeffaflaşırken yükseklik kapansın (0.3s gecikmeli gizleme) */
+  transition: opacity 0.2s ease-out, max-height 0.3s ease-out, margin 0.3s ease-out, visibility 0s linear 0.3s !important;
 }
 
-/* 4. Sadece aktif satırı görünür yap */
+/* 4. Aktif satırlar (Yeni gelen satır) */
 .blyrics-container > .blyrics--line.blyrics--active {
+  display: block !important;
+  position: relative !important;
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
+  
+  /* Yüksekliği anında veriyoruz ki içerik sığsın ve animasyon düzgün çalışsın */
+  max-height: 35vh !important; 
+  margin: 0 0 5px 0 !important; 
+  overflow: visible !important;
+  
+  /* Giriş Animasyonu: max-height anında uygulanır, sadece opacity ve visibility geçiş yapar */
+  transition: opacity 0.3s ease-in, visibility 0s linear 0s !important;
+  animation: lineEnter 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+}
+
+/* İngilizce Ana Sözler (Yan yana dizilmeleri için inline) */
+.blyrics-container > .blyrics--line > span:not(.blyrics--translated) {
+  display: inline !important;
+  font-size: 6.5rem !important; 
+  font-weight: 900 !important;
+  line-height: 1.1 !important; /* Kelimeler arası dikey boşluğu azalttık */
+}
+
+/* 4.1. Animasyon */
+@keyframes lineEnter {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 /* 5. Kelimelerin "Kayarak Dolma" (Karaoke) animasyonunu iptal edip "Anında Belirme" yap */
 .blyrics-container > .blyrics--line > span > .blyrics--word,
 .blyrics-container > .blyrics--line > span > .blyrics--word::after,
 .blyrics-container > .blyrics--line > span > .blyrics--word::before {
-  /* BetterLyrics animasyon veya transition ile soldan sağa kaydırıyor. 
-     step-start sayesinde bu akış "çizgi gibi dolmak" yerine, kelime başladığı an şak diye %100 dolar! */
   animation-timing-function: step-start !important;
   transition-timing-function: step-start !important;
   transition-duration: 0s !important;
-  
   display: inline-block;
-  margin-right: 8px; /* Kelimeler arası boşluk */
+  transform: none !important;
+  text-shadow: none !important;
 }
 
-/* Geçmiş kelimeler (Zaten okunmuş olanlar) tam beyaz kalsın */
 .blyrics-container > .blyrics--line > span > .blyrics--word[style*="background-size: 100%"],
 .blyrics-container > .blyrics--line > span > .blyrics--word.blyrics--active {
   animation-timing-function: step-start !important;
   transition-timing-function: step-start !important;
+  transform: none !important;
+  text-shadow: none !important;
 }
 
 /* Eklenti varsayılan karaoke rengini eziyorsa diye garantiye alalım */
@@ -70,21 +103,113 @@
   --blyrics-lyric-inactive-color: transparent; 
 }
 
-/* Çeviriler için daha şık, küçük ve uyumlu bir stil */
+/* Çeviriler - Ekranın daha sağ altına ve birbiriyle uyumlu hizada */
 .blyrics--translated {
-  font-size: 2.2rem !important;
+  position: relative !important;
+  display: block !important;
+  width: 100% !important; 
+  text-align: left !important; /* Şarkı sözleriyle aynı hizadan (soldan) başlasın */
+  
+  margin: 10px 0 0 0 !important; /* Ana sözlerin hemen altına ufak bir boşlukla yerleşsin */
+  transform: none !important; /* Tüm ekstra kaydırmaları iptal et */
+  float: none !important; /* Float iptal */
+  
+  font-size: 2.1rem !important;
   color: #cccccc !important;
   font-weight: 700 !important;
-  display: block !important;
-  margin-top: 15px !important;
   font-family: 'Playfair Display', serif !important;
   text-transform: none !important;
+  
+  word-wrap: break-word !important; /* Uzun sözleri alt satıra at */
+  white-space: normal !important;
+  line-height: 1.4 !important; /* Okunabilirliği artır */
 }
 
-/* Scrollbar tamamen gizli kalsın */
-html, body, .ytmusic-description-shelf-renderer, #side-panel {
+/* Ana sayfanın bozulmaması için body ve html'den overflow: hidden'ı kaldırıyoruz. 
+   Sadece görsel olarak scrollbar'ı gizliyoruz. */
+html, body, #side-panel {
   scrollbar-width: none !important;
 }
+
+/* Sadece Şarkı Sözleri sekmesindeki fiziksel kaymayı kapatıyoruz */
+.ytmusic-description-shelf-renderer {
+  overflow: hidden !important; 
+  scrollbar-width: none !important;
+}
+
 ::-webkit-scrollbar {
   display: none !important;
 }
+
+/* 6. Footer ve Butonların Zıplamasını Engelle (Sabit Pozisyon) */
+.blyrics-container > *:not(.blyrics--line) {
+  position: fixed !important;
+  bottom: 12vh !important; /* YouTube player barının hemen üstüne sabitler */
+  left: 5% !important; 
+  z-index: 9999 !important;
+}
+
+/* Resume Autoscroll Butonunu Gizle */
+div[class*="resume"], button[class*="resume"], [class*="scrolling-resume"], .blyrics--scrolling-resume {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* 7. Enstrümantal Bölüm (Müzik İkonu Yerine 3 Animasyonlu Top) */
+.blyrics--line[data-type="instrumental"],
+.blyrics--instrumental {
+  position: relative !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  min-height: 80px !important;
+  color: transparent !important; /* Varsayılan metni veya ikonu gizle */
+}
+
+/* Varsayılan ikonları veya içeriği gizle */
+.blyrics--line[data-type="instrumental"] > *,
+.blyrics--instrumental > * {
+  display: none !important;
+}
+
+/* 3 Animasyonlu Top (Zamanla beyaz dolma efektli aşağı-yukarı animasyonu) */
+.blyrics--line[data-type="instrumental"]::before,
+.blyrics--instrumental::before {
+  content: "" !important;
+  display: block !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  margin-left: 45px !important; /* Topları hizalamak için */
+  animation: bounceDots 2.5s infinite ease-in-out !important;
+}
+
+@keyframes bounceDots {
+  0%, 100% {
+    box-shadow: 
+      -40px 0 0 rgba(255, 255, 255, 0.2), 
+      0 0 0 rgba(255, 255, 255, 0.2), 
+      40px 0 0 rgba(255, 255, 255, 0.2);
+  }
+  33% {
+    box-shadow: 
+      -40px -20px 0 rgba(255, 255, 255, 1), 
+      0 0 0 rgba(255, 255, 255, 0.2), 
+      40px 0 0 rgba(255, 255, 255, 0.2);
+  }
+  66% {
+    box-shadow: 
+      -40px 0 0 rgba(255, 255, 255, 0.2), 
+      0 -20px 0 rgba(255, 255, 255, 1), 
+      40px 0 0 rgba(255, 255, 255, 0.2);
+  }
+  99% {
+    box-shadow: 
+      -40px 0 0 rgba(255, 255, 255, 0.2), 
+      0 0 0 rgba(255, 255, 255, 0.2), 
+      40px -20px 0 rgba(255, 255, 255, 1);
+  }
+}
+
